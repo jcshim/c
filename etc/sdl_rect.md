@@ -18,6 +18,29 @@
 
 #### 3. 코드에 추가
 ```
+#include <SDL.h>
+
+int main() {
+    SDL_Window* w = SDL_CreateWindow("Box", 100, 100, 640, 480, 0);
+    SDL_Renderer* r = SDL_CreateRenderer(w, -1, 0);
+
+    SDL_SetRenderDrawColor(r, 0, 255, 0, 255);
+    SDL_RenderFillRect(r, &(SDL_Rect){220, 165, 200, 150});
+
+    SDL_RenderPresent(r);
+
+    SDL_Event e;
+    while (SDL_WaitEvent(&e)) {
+        if (e.type == SDL_QUIT) break;
+    }
+
+    SDL_DestroyRenderer(r);
+    SDL_DestroyWindow(w);
+    SDL_Quit();
+    return 0;
+}
+```
+```
 #define SDL_MAIN_HANDLED
 #include <SDL.h>
 
