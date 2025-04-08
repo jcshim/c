@@ -1,6 +1,7 @@
 ## Visual Studio, 콘솔기반 프로젝트
 
-### Nuget으로 raylib 검색
+### Nuget에서 raylib 설치
+- 프로젝트>Nuget패키지관리>찿아보기>raylib 
 
 ## 창을 하나로 만드려면
 1. 프로젝트 > 속성> 링커 > 시스템 > 하위 시스템 Windows (/SUBSYSTEM:WINDOWS)
