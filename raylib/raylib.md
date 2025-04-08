@@ -22,6 +22,20 @@ int main(void)
     CloseWindow();  // 창 닫기
 }
 ```
+```
+#include "raylib.h"
+int main() {
+    InitWindow(480, 320, "GKNU");
+    while (!WindowShouldClose()) {
+        BeginDrawing();
+        ClearBackground(RAYWHITE);
+        DrawRectangle(10, 10, 120, 40, (Color) { 0, 255, 0, 128 });
+        DrawText("It works!", 20, 20, 20, BLACK);
+        EndDrawing();
+    }
+    CloseWindow();
+}
+```
 ### 위에서 아래로 내려오는 공
 ```
 #include "raylib.h"
