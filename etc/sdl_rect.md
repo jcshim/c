@@ -13,8 +13,8 @@
 ✅ 설치되면 `SDL2.dll`, `include`, `lib` 등이 자동으로 구성됩니다.
 ---
 ### ✅ 창을 하나로 만드려면
-1. 링커 > 시스템 > 하위 시스템	Windows (/SUBSYSTEM:WINDOWS)
-2. 링커 > 고급 > 엔트리 지점	mainCRTStartup
+1. 프로젝트 > 속성> 링커 > 시스템 > 하위 시스템	Windows (/SUBSYSTEM:WINDOWS)
+2. 프로젝트 > 속성> 링커 > 고급 > 엔트리 지점	mainCRTStartup
 
 #### 3. 코드에 추가
 ```
