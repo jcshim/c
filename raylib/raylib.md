@@ -5,7 +5,7 @@
 
 ## 창을 하나로 만드려면
 1. 프로젝트 > 속성> 링커 > 시스템 > 하위 시스템 Windows (/SUBSYSTEM:WINDOWS)
-2. 프로젝트 > 속성> 링커 > 고급 > 엔트리 지점 mainCRTStartup
+2. 프로젝트 > 속성> 링커 > 고급 > 진입점(엔트리 지점) mainCRTStartup
 ```
 #include "raylib.h"
 
