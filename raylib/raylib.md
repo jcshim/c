@@ -6,6 +6,7 @@
 ## 창을 하나로 만드려면
 1. 프로젝트 > 속성> 링커 > 시스템 > 하위 시스템 Windows (/SUBSYSTEM:WINDOWS)
 2. 프로젝트 > 속성> 링커 > 고급 > 진입점(엔트리 지점) mainCRTStartup
+* mainCRTStartup을 엔트리 포인트로 지정하면서 하위시스템을 Windows로 두면, 콘솔 창이 생성되지 않고 프로그램이 백그라운드에서 실행된다.
 ```
 #include "raylib.h"
 
