@@ -1,0 +1,76 @@
+#include <windows.h>
+#include <dshow.h>
+
+#pragma comment(lib, "strmiids.lib")
+#pragma comment(lib, "ole32.lib")
+
+HWND g_hwnd = NULL;
+
+LRESULT CALLBACK WndProc(HWND hwnd, UINT msg, WPARAM wParam, LPARAM lParam) {
+    if (msg == WM_DESTROY) PostQuitMessage(0);
+    return DefWindowProc(hwnd, msg, wParam, lParam);
+}
+
+int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow) {
+    IGraphBuilder* pGraph = NULL;
+    ICaptureGraphBuilder2* pBuilder = NULL;
+    IMediaControl* pControl = NULL;
+    IBaseFilter* pCamera = NULL;
+    ICreateDevEnum* pDevEnum = NULL;
+    IEnumMoniker* pEnum = NULL;
+    IMoniker* pMoniker = NULL;
+    IVideoWindow* pVidWin = NULL;
+
+    WNDCLASSW wc = { 0 };
+    wc.lpfnWndProc = WndProc;
+    wc.hInstance = hInstance;
+    wc.lpszClassName = L"CameraWindowClass";
+    if (!RegisterClassW(&wc)) return -1;
+
+    g_hwnd = CreateWindowW(L"CameraWindowClass", L"USB Camera",
+        WS_OVERLAPPEDWINDOW | WS_VISIBLE, CW_USEDEFAULT, CW_USEDEFAULT, 800, 600,
+        NULL, NULL, hInstance, NULL);
+    if (!g_hwnd) return -1;
+
+    if (FAILED(CoInitialize(NULL))) return -1;
+
+    if (FAILED(CoCreateInstance(&CLSID_FilterGraph, NULL, CLSCTX_INPROC_SERVER, &IID_IGraphBuilder, (void**)&pGraph))) goto cleanup;
+    if (FAILED(CoCreateInstance(&CLSID_CaptureGraphBuilder2, NULL, CLSCTX_INPROC_SERVER, &IID_ICaptureGraphBuilder2, (void**)&pBuilder))) goto cleanup;
+    pBuilder->lpVtbl->SetFiltergraph(pBuilder, pGraph);
+
+    if (FAILED(CoCreateInstance(&CLSID_SystemDeviceEnum, NULL, CLSCTX_INPROC_SERVER, &IID_ICreateDevEnum, (void**)&pDevEnum))) goto cleanup;
+    if (pDevEnum->lpVtbl->CreateClassEnumerator(pDevEnum, &CLSID_VideoInputDeviceCategory, &pEnum, 0) != S_OK) goto cleanup;
+    if (pEnum->lpVtbl->Next(pEnum, 1, &pMoniker, NULL) != S_OK) goto cleanup;
+    if (FAILED(pMoniker->lpVtbl->BindToObject(pMoniker, NULL, NULL, &IID_IBaseFilter, (void**)&pCamera))) goto cleanup;
+
+    if (FAILED(pGraph->lpVtbl->AddFilter(pGraph, pCamera, L"Capture Filter"))) goto cleanup;
+    if (FAILED(pBuilder->lpVtbl->RenderStream(pBuilder, &PIN_CATEGORY_PREVIEW, &MEDIATYPE_Video, pCamera, NULL, NULL))) goto cleanup;
+    if (FAILED(pGraph->lpVtbl->QueryInterface(pGraph, &IID_IMediaControl, (void**)&pControl))) goto cleanup;
+
+    if (SUCCEEDED(pGraph->lpVtbl->QueryInterface(pGraph, &IID_IVideoWindow, (void**)&pVidWin))) {
+        pVidWin->lpVtbl->put_Owner(pVidWin, (OAHWND)g_hwnd);
+        pVidWin->lpVtbl->put_WindowStyle(pVidWin, WS_CHILD | WS_CLIPSIBLINGS);
+        pVidWin->lpVtbl->SetWindowPosition(pVidWin, 0, 0, 800, 600);
+        pVidWin->lpVtbl->Release(pVidWin);
+    }
+
+    pControl->lpVtbl->Run(pControl);
+
+    MSG msg;
+    while (GetMessage(&msg, NULL, 0, 0)) {
+        TranslateMessage(&msg);
+        DispatchMessage(&msg);
+    }
+
+cleanup:
+    if (pControl) pControl->lpVtbl->Release(pControl);
+    if (pCamera)  pCamera->lpVtbl->Release(pCamera);
+    if (pMoniker) pMoniker->lpVtbl->Release(pMoniker);
+    if (pEnum)    pEnum->lpVtbl->Release(pEnum);
+    if (pDevEnum) pDevEnum->lpVtbl->Release(pDevEnum);
+    if (pBuilder) pBuilder->lpVtbl->Release(pBuilder);
+    if (pGraph)   pGraph->lpVtbl->Release(pGraph);
+
+    CoUninitialize();
+    return 0;
+}
