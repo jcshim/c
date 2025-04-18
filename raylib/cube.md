@@ -1,3 +1,4 @@
+```
 #include "raylib.h"
 #include "rlgl.h" 
 
@@ -47,4 +48,4 @@ int main(void)
 
     return 0;
 }
-
+```
