@@ -29,7 +29,7 @@ int main() {
 - **논리 연산자**: `&&`, `||`, `!`
 - **할당 연산자**: `=`
 - **예시**:
-  ```c
+```c
 #include <stdio.h>
 int main() {
     int x = 5, y = 3;
@@ -37,13 +37,13 @@ int main() {
     if (x > y) printf("x > y");
     return 0;
 }
-  ```
+```
 
 ## 3. 제어문
 - **조건문**: `if`, `else`, `if-else if-else`
 - **반복문**: `for`, `while`, `do-while`
 - **예시**:
-  ```c
+```c
 #include <stdio.h>
 int main() {
     int n = -1;
@@ -54,39 +54,39 @@ int main() {
         printf("%d ", i);
     return 0;
 }
-  ```
+```
 
 ## 4. 함수
 - **함수**: 코드를 하나의 기능으로 묶어 재사용성을 높이는 구조.
 - **구성요소**: 함수 정의, 호출, 반환값, 매개변수
 - **예시**:
-  ```c
+```c
 #include <stdio.h>
 int add(int x, int y) { return x + y; }
 int main() {
     printf("%d", add(2, 3));
     return 0;
 }
-  ```
+```
 
 ## 5. 배열
 - **배열**: 같은 데이터 타입의 데이터를 순서대로 저장.
 - **특징**: 인덱스로 원소에 접근 가능.
 - **예시**:
-  ```c
+```c
 #include <stdio.h>
 int main() {
     int arr[3] = {1, 2, 3};
     printf("%d", arr[1]);
     return 0;
 }
-  ```
+```
 
 ## 6. 포인터
 - **포인터**: 변수의 메모리 주소를 저장하는 변수.
 - **사용 연산자**: 주소 연산자(`&`), 간접 참조 연산자(`*`)
 - **예시**:
-  ```c
+```c
 #include <stdio.h>
 int main() {
     int a = 5;
@@ -94,7 +94,7 @@ int main() {
     printf("%d", *p);
     return 0;
 }
-  ```
+```
 
 ---
 
