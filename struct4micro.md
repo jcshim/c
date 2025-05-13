@@ -215,7 +215,7 @@ void show(Student s) {
 }
 
 int main() {
-    Student list[3] = {{010, 85.5}, {011, 92.0}, {012, 77.5}};
+    Student list[3] = {{1010, 85.5}, {1011, 92.0}, {1012, 77.5}};
     for (int i = 0; i < 3; i++) {
         show(list[i]);
     }
