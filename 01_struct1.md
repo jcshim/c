@@ -68,4 +68,25 @@ a: 1.0, 2.0
 
 ---
 
-필요하시다면 `C++`에서의 `class`와 `struct` 차이도 설명해드릴 수 있어요!
+# 구조체 멤버 더하기
+```
+#include <stdio.h>
+
+typedef struct Vector2{
+    float x, y;
+} Vector2;
+
+Vector2 Add(Vector2 a, Vector2 b) {
+    Vector2 c;
+    c.x = a.x + b.x;
+    c.y = a.y + b.y;
+    return c;
+}
+int main() {
+    Vector2 v1 = { 1, 1 };
+    Vector2 v2 = { 2, 2 };
+    Vector2 v3;
+    v3 = Add(v1, v2);  // 예시로 호출
+    printf("%.0f, %.0f\n", v3.x, v3.y);
+}
+```
