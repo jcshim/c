@@ -17,8 +17,8 @@ struct Student {
 };
 
 int main() {
-    struct Student s = { 1001, 87.5};
-    printf("ID: %d, 점수: %.1f\n", s.id, s.grade);
+    struct Student me = { 1001, 87.5};
+    printf("ID: %d, 점수: %.1f\n", me.id, me.grade);
     return 0;
 }
 ```
@@ -39,10 +39,10 @@ struct Student {
 };
 
 int main() {
-    struct Student s;
-    s.id =  1002;
-    s.grade = 91.0;
-    printf("ID: %d, 점수: %.1f\n", s.id, s.grade);
+    struct Student me;
+    me.id =  1002;
+    me.grade = 91.0;
+    printf("ID: %d, 점수: %.1f\n", me.id, me.grade);
     return 0;
 }
 ```
@@ -63,8 +63,8 @@ struct Student {
 };
 
 int main() {
-    struct Student s = { 1003, 75.5};
-    printf("%d번 학생의 점수는 %.1f입니다.\n", s.id, s.grade);
+    struct Student me = { 1003, 75.5};
+    printf("%d번 학생의 점수는 %.1f입니다.\n", me.id, me.grade);
     return 0;
 }
 ```
@@ -108,13 +108,13 @@ struct Student {
     float grade;
 };
 
-void show(struct Student s) {
-    printf("ID: %d, 점수: %.1f\n", s.id, s.grade);
+void show(struct Student me) {
+    printf("ID: %d, 점수: %.1f\n", me.id, me.grade);
 }
 
 int main() {
-    struct Student s = { 1006, 84.0};
-    show(s);
+    struct Student me = { 1006, 84.0};
+    show(me);
     return 0;
 }
 ```
@@ -141,8 +141,8 @@ struct Student {
 };
 
 int main() {
-    struct Student s = { 1007, {"Min", "Kim"}, 95.0};
-    printf("%s %s의 점수: %.1f\n", s.name.first, s.name.last, s.grade);
+    struct Student st = { 1007, {"Min", "Kim"}, 95.0};
+    printf("%s %s의 점수: %.1f\n", st.name.first, st.name.last, st.grade);
     return 0;
 }
 ```
@@ -164,11 +164,11 @@ struct Student {
 };
 
 int main() {
-    struct Student* s = malloc(sizeof(struct Student));
-    s->id =  1008;
-    s->grade = 78.5;
-    printf("ID: %d, 점수: %.1f\n", s->id, s->grade);
-    free(s);
+    struct Student* me = malloc(sizeof(struct Student));
+    me->id =  1008;
+    me->grade = 78.5;
+    printf("ID: %d, 점수: %.1f\n", me->id, me->grade);
+    free(me);
     return 0;
 }
 ```
@@ -189,8 +189,8 @@ typedef struct {
 } Student;
 
 int main() {
-    Student s = { 1009, 89.0};
-    printf("학번: %d, 점수: %.1f\n", s.id, s.grade);
+    Student me = { 1009, 89.0};
+    printf("학번: %d, 점수: %.1f\n", me.id, me.grade);
     return 0;
 }
 ```
