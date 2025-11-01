@@ -1,3 +1,4 @@
+```
 // ds_minis.c : C 핵심 자료구조 5종 "최소 예제 + 간단 테스트"
 // build: gcc -std=c99 -O2 ds_minis.c -o ds_minis
 #include <stdio.h>
@@ -210,3 +211,4 @@ int main(void){
     puts("All tests passed.");
     return 0;
 }
+```
