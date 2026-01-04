@@ -9,7 +9,7 @@ void main() {
     SelectObject(h, b);
     // 엔터키가 눌릴 때까지 무한 반복
     while (!GetAsyncKeyState(13)) {
-        Rectangle(h, 200, 200, 300, 300);
+         Rectangle(h, 0, 0, 100, 100);
     }
 }
 ```
