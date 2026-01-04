@@ -1,3 +1,20 @@
+# 제일 간단한 그래픽 코딩
+## Visual Studio에서 빈 프로젝트, 소스추가 main.c 컴파일 한다.
+```
+// 초록색 사각형 그리기
+#include <windows.h>
+void main() {
+    HDC h = GetDC(0);
+    HBRUSH b = CreateSolidBrush(RGB(0, 255, 0));
+    SelectObject(h, b);
+    // 엔터키가 눌릴 때까지 무한 반복
+    while (!GetAsyncKeyState(13)) {
+        Rectangle(h, 200, 200, 300, 300);
+    }
+}
+```
+
+
 Windows GDI(Graphics Device Interface)는 Windows 운영체제가 제공하는 2D 그래픽 출력 API이다. 주요 특징은 다음과 같다:
 
 - **장치 독립성**: 화면, 프린터 등 다양한 출력 장치에서 동일한 방식으로 그래픽을 출력할 수 있다. 프로그램이 하드웨어 세부 사항을 직접 다룰 필요 없이 GDI를 통해 그래픽을 생성하고 출력할 수 있다[1][5][13].
