@@ -1,19 +1,236 @@
-
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Prof. Jaechang Shim</title>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>할 일 목록</title>
+<style>
+  :root {
+    --bg: #F6F4EF;
+    --card: #FFFFFF;
+    --ink: #262420;
+    --muted: #8A857C;
+    --accent: #3B6D11;
+    --accent-bg: #EAF3DE;
+    --border: #E4E0D6;
+    --danger: #A32D2D;
+  }
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Malgun Gothic", sans-serif;
+    background: var(--bg);
+    color: var(--ink);
+    min-height: 100vh;
+    display: flex;
+    justify-content: center;
+    padding: 48px 20px;
+  }
+  .app {
+    width: 100%;
+    max-width: 460px;
+  }
+  h1 {
+    font-size: 24px;
+    font-weight: 600;
+    margin: 0 0 4px;
+  }
+  .subtitle {
+    color: var(--muted);
+    font-size: 14px;
+    margin: 0 0 24px;
+  }
+  .input-row {
+    display: flex;
+    gap: 8px;
+    margin-bottom: 16px;
+  }
+  input[type="text"] {
+    flex: 1;
+    padding: 12px 14px;
+    border: 1px solid var(--border);
+    border-radius: 10px;
+    font-size: 15px;
+    background: var(--card);
+    color: var(--ink);
+  }
+  input[type="text"]:focus {
+    outline: none;
+    border-color: var(--accent);
+  }
+  button.add {
+    padding: 0 18px;
+    border: none;
+    border-radius: 10px;
+    background: var(--ink);
+    color: #fff;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+  }
+  button.add:active { transform: scale(0.97); }
+
+  .stats {
+    display: flex;
+    justify-content: space-between;
+    color: var(--muted);
+    font-size: 13px;
+    margin-bottom: 12px;
+    padding: 0 2px;
+  }
+
+  ul {
+    list-style: none;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+  }
+  li {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    padding: 12px 14px;
+    background: var(--card);
+    border: 1px solid var(--border);
+    border-radius: 10px;
+  }
+  .check {
+    width: 22px;
+    height: 22px;
+    border-radius: 50%;
+    border: 1.5px solid var(--border);
+    background: transparent;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-shrink: 0;
+    cursor: pointer;
+    padding: 0;
+  }
+  .check.done {
+    background: var(--accent-bg);
+    border-color: var(--accent);
+    color: var(--accent);
+    font-size: 13px;
+  }
+  .text {
+    flex: 1;
+    font-size: 14px;
+    word-break: break-word;
+  }
+  .text.done {
+    color: var(--muted);
+    text-decoration: line-through;
+  }
+  .delete {
+    border: none;
+    background: transparent;
+    color: var(--muted);
+    cursor: pointer;
+    font-size: 16px;
+    padding: 4px;
+    line-height: 1;
+  }
+  .delete:hover { color: var(--danger); }
+
+  .empty {
+    text-align: center;
+    color: var(--muted);
+    font-size: 14px;
+    padding: 40px 0;
+  }
+</style>
 </head>
 <body>
-  <h1>
-    <a href="http://cafe.naver.com/vl">Prof. Jaechang Shim</a>
-  </h1>
-  <h2>Andong National Univ.</h2>
-  <br>
-  <img src="https://github.com/jcshim/img/raw/main/jcshim.jpg" alt="심재창 프로필 사진" width="300">
-  <br>
-  <a href="http://cafe.naver.com/vl" target="_blank" rel="noopener noreferrer">Vision Lab</a>
+  <div class="app">
+    <h1>할 일 목록</h1>
+    <p class="subtitle">오늘 할 일을 정리해보세요.</p>
+
+    <div class="input-row">
+      <input type="text" id="todo-input" placeholder="할 일을 입력하세요" />
+      <button class="add" id="add-btn">추가</button>
+    </div>
+
+    <div class="stats" id="stats"></div>
+
+    <ul id="todo-list"></ul>
+    <p class="empty" id="empty-msg">아직 할 일이 없어요. 위에서 추가해보세요.</p>
+  </div>
+
+<script>
+  const STORAGE_KEY = 'todos';
+  let todos = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
+  let nextId = todos.length ? Math.max(...todos.map(t => t.id)) + 1 : 1;
+
+  const listEl = document.getElementById('todo-list');
+  const emptyEl = document.getElementById('empty-msg');
+  const statsEl = document.getElementById('stats');
+  const inputEl = document.getElementById('todo-input');
+
+  function save() {
+    localStorage.setItem(STORAGE_KEY, JSON.stringify(todos));
+  }
+
+  function render() {
+    listEl.innerHTML = '';
+    emptyEl.style.display = todos.length === 0 ? 'block' : 'none';
+
+    const doneCount = todos.filter(t => t.done).length;
+    statsEl.textContent = todos.length
+      ? `전체 ${todos.length}개 · 완료 ${doneCount}개`
+      : '';
+
+    todos.forEach(todo => {
+      const li = document.createElement('li');
+
+      const check = document.createElement('button');
+      check.className = 'check' + (todo.done ? ' done' : '');
+      check.setAttribute('aria-label', todo.done ? '완료 취소' : '완료로 표시');
+      check.textContent = todo.done ? '✓' : '';
+      check.onclick = () => {
+        todo.done = !todo.done;
+        save();
+        render();
+      };
+
+      const span = document.createElement('span');
+      span.className = 'text' + (todo.done ? ' done' : '');
+      span.textContent = todo.text;
+
+      const del = document.createElement('button');
+      del.className = 'delete';
+      del.setAttribute('aria-label', '삭제');
+      del.textContent = '✕';
+      del.onclick = () => {
+        todos = todos.filter(t => t.id !== todo.id);
+        save();
+        render();
+      };
+
+      li.appendChild(check);
+      li.appendChild(span);
+      li.appendChild(del);
+      listEl.appendChild(li);
+    });
+  }
+
+  function addTodo() {
+    const text = inputEl.value.trim();
+    if (!text) return;
+    todos.push({ id: nextId++, text, done: false });
+    inputEl.value = '';
+    save();
+    render();
+  }
+
+  document.getElementById('add-btn').addEventListener('click', addTodo);
+  inputEl.addEventListener('keydown', e => {
+    if (e.key === 'Enter') addTodo();
+  });
+
+  render();
+</script>
 </body>
 </html>
