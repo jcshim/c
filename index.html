@@ -1,236 +1,190 @@
 <!DOCTYPE html>
 <html lang="ko">
 <head>
-<meta charset="UTF-8" />
-<meta name="viewport" content="width=device-width, initial-scale=1.0" />
-<title>할 일 목록</title>
-<style>
-  :root {
-    --bg: #F6F4EF;
-    --card: #FFFFFF;
-    --ink: #262420;
-    --muted: #8A857C;
-    --accent: #3B6D11;
-    --accent-bg: #EAF3DE;
-    --border: #E4E0D6;
-    --danger: #A32D2D;
-  }
-  * { box-sizing: border-box; }
-  body {
-    margin: 0;
-    font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", "Malgun Gothic", sans-serif;
-    background: var(--bg);
-    color: var(--ink);
-    min-height: 100vh;
-    display: flex;
-    justify-content: center;
-    padding: 48px 20px;
-  }
-  .app {
-    width: 100%;
-    max-width: 460px;
-  }
-  h1 {
-    font-size: 24px;
-    font-weight: 600;
-    margin: 0 0 4px;
-  }
-  .subtitle {
-    color: var(--muted);
-    font-size: 14px;
-    margin: 0 0 24px;
-  }
-  .input-row {
-    display: flex;
-    gap: 8px;
-    margin-bottom: 16px;
-  }
-  input[type="text"] {
-    flex: 1;
-    padding: 12px 14px;
-    border: 1px solid var(--border);
-    border-radius: 10px;
-    font-size: 15px;
-    background: var(--card);
-    color: var(--ink);
-  }
-  input[type="text"]:focus {
-    outline: none;
-    border-color: var(--accent);
-  }
-  button.add {
-    padding: 0 18px;
-    border: none;
-    border-radius: 10px;
-    background: var(--ink);
-    color: #fff;
-    font-size: 15px;
-    font-weight: 500;
-    cursor: pointer;
-  }
-  button.add:active { transform: scale(0.97); }
-
-  .stats {
-    display: flex;
-    justify-content: space-between;
-    color: var(--muted);
-    font-size: 13px;
-    margin-bottom: 12px;
-    padding: 0 2px;
-  }
-
-  ul {
-    list-style: none;
-    margin: 0;
-    padding: 0;
-    display: flex;
-    flex-direction: column;
-    gap: 8px;
-  }
-  li {
-    display: flex;
-    align-items: center;
-    gap: 10px;
-    padding: 12px 14px;
-    background: var(--card);
-    border: 1px solid var(--border);
-    border-radius: 10px;
-  }
-  .check {
-    width: 22px;
-    height: 22px;
-    border-radius: 50%;
-    border: 1.5px solid var(--border);
-    background: transparent;
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-shrink: 0;
-    cursor: pointer;
-    padding: 0;
-  }
-  .check.done {
-    background: var(--accent-bg);
-    border-color: var(--accent);
-    color: var(--accent);
-    font-size: 13px;
-  }
-  .text {
-    flex: 1;
-    font-size: 14px;
-    word-break: break-word;
-  }
-  .text.done {
-    color: var(--muted);
-    text-decoration: line-through;
-  }
-  .delete {
-    border: none;
-    background: transparent;
-    color: var(--muted);
-    cursor: pointer;
-    font-size: 16px;
-    padding: 4px;
-    line-height: 1;
-  }
-  .delete:hover { color: var(--danger); }
-
-  .empty {
-    text-align: center;
-    color: var(--muted);
-    font-size: 14px;
-    padding: 40px 0;
-  }
-</style>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>실시간 방명록</title>
+    <style>
+        /* 모던 & 아카데믹 화이트-그레이 디자인 스타일링 */
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
+            background-color: #f8f9fa;
+            color: #333333;
+            margin: 0;
+            padding: 40px 20px;
+            display: flex;
+            justify-content: center;
+        }
+        .container {
+            width: 100%;
+            max-width: 550px;
+            background: #ffffff;
+            padding: 30px;
+            border-radius: 12px;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.05);
+        }
+        h2 {
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-top: 0;
+            margin-bottom: 24px;
+            color: #1a1a1a;
+            border-bottom: 2px solid #edf2f7;
+            padding-bottom: 12px;
+        }
+        .input-box {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+        input[type="text"] {
+            flex: 1;
+            padding: 12px 16px;
+            border: 1px solid #e2e8f0;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            background-color: #f8f9fa;
+            transition: all 0.2s ease;
+        }
+        input[type="text"]:focus {
+            outline: none;
+            border-color: #4a5568;
+            background-color: #ffffff;
+        }
+        button {
+            padding: 12px 24px;
+            background-color: #2d3748;
+            color: #ffffff;
+            border: none;
+            border-radius: 6px;
+            font-size: 0.95rem;
+            font-weight: 500;
+            cursor: pointer;
+            transition: background 0.2s ease;
+        }
+        button:hover {
+            background-color: #1a202c;
+        }
+        .guestbook-list {
+            list-style: none;
+            padding: 0;
+            margin: 0;
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+        }
+        .guestbook-item {
+            background-color: #f7fafc;
+            padding: 14px 18px;
+            border-left: 4px solid #cbd5e0;
+            border-radius: 4px;
+            font-size: 0.95rem;
+            line-height: 1.5;
+            color: #4a5568;
+            animation: fadeIn 0.3s ease-in-out;
+        }
+        .time-stamp {
+            display: block;
+            font-size: 0.75rem;
+            color: #a0aec0;
+            margin-top: 6px;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(10px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+    </style>
 </head>
 <body>
-  <div class="app">
-    <h1>할 일 목록</h1>
-    <p class="subtitle">오늘 할 일을 정리해보세요.</p>
 
-    <div class="input-row">
-      <input type="text" id="todo-input" placeholder="할 일을 입력하세요" />
-      <button class="add" id="add-btn">추가</button>
+<div class="container">
+    <h2>실시간 방명록 (Guestbook)</h2>
+    
+    <!-- 입력 영역 -->
+    <div class="input-box">
+        <input type="text" id="guestMessage" placeholder="메시지를 입력하세요..." autocomplete="off">
+        <button id="btnSubmit">등록</button>
     </div>
 
-    <div class="stats" id="stats"></div>
+    <!-- 방명록 리스트 영역 -->
+    <ul class="guestbook-list" id="guestbookList"></ul>
+</div>
 
-    <ul id="todo-list"></ul>
-    <p class="empty" id="empty-msg">아직 할 일이 없어요. 위에서 추가해보세요.</p>
-  </div>
+<!-- Firebase v10 SDK 모듈 스크립트 연동 -->
+<script type="module">
+    import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
+    import { getFirestore, collection, addDoc, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
 
-<script>
-  const STORAGE_KEY = 'todos';
-  let todos = JSON.parse(localStorage.getItem(STORAGE_KEY) || '[]');
-  let nextId = todos.length ? Math.max(...todos.map(t => t.id)) + 1 : 1;
+    // 제공해주신 Firebase Config 설정
+    const firebaseConfig = {
+        apiKey: "AIzaSyBK7hn5H1kr6d6nxijRNt8UIDaxDOLYMIQ",
+        authDomain: "jcshim-test.firebaseapp.com",
+        projectId: "jcshim-test",
+        storageBucket: "jcshim-test.firebasestorage.app",
+        messagingSenderId: "4415180017",
+        appId: "1:4415180017:web:87252a246a443888e6ad50"
+    };
 
-  const listEl = document.getElementById('todo-list');
-  const emptyEl = document.getElementById('empty-msg');
-  const statsEl = document.getElementById('stats');
-  const inputEl = document.getElementById('todo-input');
+    // Firebase 및 Firestore 초기화
+    const app = initializeApp(firebaseConfig);
+    const db = getFirestore(app);
 
-  function save() {
-    localStorage.setItem(STORAGE_KEY, JSON.stringify(todos));
-  }
+    // DOM 요소 가져오기
+    const messageInput = document.getElementById('guestMessage');
+    const submitBtn = document.getElementById('btnSubmit');
+    const guestbookList = document.getElementById('guestbookList');
 
-  function render() {
-    listEl.innerHTML = '';
-    emptyEl.style.display = todos.length === 0 ? 'block' : 'none';
+    // 1. 데이터 저장 (addDoc)
+    async function saveMessage() {
+        const text = messageInput.value.trim();
+        if (!text) return; // 빈 칸이면 중단
 
-    const doneCount = todos.filter(t => t.done).length;
-    statsEl.textContent = todos.length
-      ? `전체 ${todos.length}개 · 완료 ${doneCount}개`
-      : '';
+        try {
+            await addDoc(collection(db, "guestbook"), {
+                message: text,
+                createdAt: new Date() // 현재 시간 저장
+            });
+            messageInput.value = ""; // 입력창 초기화
+        } catch (error) {
+            console.error("데이터 저장 실패: ", error);
+            alert("저장에 실패했습니다. Firestore 보안 규칙을 확인해보세요.");
+        }
+    }
 
-    todos.forEach(todo => {
-      const li = document.createElement('li');
-
-      const check = document.createElement('button');
-      check.className = 'check' + (todo.done ? ' done' : '');
-      check.setAttribute('aria-label', todo.done ? '완료 취소' : '완료로 표시');
-      check.textContent = todo.done ? '✓' : '';
-      check.onclick = () => {
-        todo.done = !todo.done;
-        save();
-        render();
-      };
-
-      const span = document.createElement('span');
-      span.className = 'text' + (todo.done ? ' done' : '');
-      span.textContent = todo.text;
-
-      const del = document.createElement('button');
-      del.className = 'delete';
-      del.setAttribute('aria-label', '삭제');
-      del.textContent = '✕';
-      del.onclick = () => {
-        todos = todos.filter(t => t.id !== todo.id);
-        save();
-        render();
-      };
-
-      li.appendChild(check);
-      li.appendChild(span);
-      li.appendChild(del);
-      listEl.appendChild(li);
+    // 버튼 클릭 및 엔터 키 이벤트 리스너
+    submitBtn.addEventListener('click', saveMessage);
+    messageInput.addEventListener('keypress', (e) => {
+        if (e.key === 'Enter') saveMessage();
     });
-  }
 
-  function addTodo() {
-    const text = inputEl.value.trim();
-    if (!text) return;
-    todos.push({ id: nextId++, text, done: false });
-    inputEl.value = '';
-    save();
-    render();
-  }
+    // 2. 실시간 데이터 동기화 및 렌더링 (onSnapshot)
+    // 등록된 시간(createdAt) 기준 내림차순(최신 글이 위로) 정렬하여 쿼리 생성
+    const q = query(collection(db, "guestbook"), orderBy("createdAt", "desc"));
 
-  document.getElementById('add-btn').addEventListener('click', addTodo);
-  inputEl.addEventListener('keydown', e => {
-    if (e.key === 'Enter') addTodo();
-  });
+    onSnapshot(q, (snapshot) => {
+        guestbookList.innerHTML = ""; // 기존 목록 비우기
+        
+        snapshot.forEach((doc) => {
+            const data = doc.data();
+            
+            // 날짜 보기 좋게 포맷팅
+            let timeString = "";
+            if (data.createdAt) {
+                const date = data.createdAt.toDate();
+                timeString = date.toLocaleString('ko-KR', { hour12: false });
+            }
 
-  render();
+            // HTML 리스트 아이템 동적 생성
+            const li = document.createElement('li');
+            li.className = 'guestbook-item';
+            li.innerHTML = `
+                <div>${data.message}</div>
+                <span class="time-stamp">${timeString}</span>
+            `;
+            guestbookList.appendChild(li);
+        });
+    });
 </script>
+
 </body>
 </html>
