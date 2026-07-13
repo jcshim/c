@@ -3,9 +3,8 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>실시간 방명록</title>
+    <title>실시간 방명록 (구글 로그인 연동)</title>
     <style>
-        /* 모던 & 아카데믹 화이트-그레이 디자인 스타일링 */
         body {
             font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, "Helvetica Neue", Arial, sans-serif;
             background-color: #f8f9fa;
@@ -32,10 +31,60 @@
             border-bottom: 2px solid #edf2f7;
             padding-bottom: 12px;
         }
+        
+        /* 로그인 섹션 스타일 */
+        .auth-box {
+            margin-bottom: 24px;
+            padding: 15px;
+            background-color: #f7fafc;
+            border-radius: 8px;
+            text-align: center;
+        }
+        .btn-google {
+            padding: 10px 20px;
+            background-color: #ffffff;
+            color: #444;
+            border: 1px solid #cbd5e0;
+            border-radius: 6px;
+            font-size: 0.9rem;
+            font-weight: bold;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.05);
+        }
+        .btn-google:hover {
+            background-color: #f7fafc;
+        }
+        .user-info {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            font-size: 0.9rem;
+            color: #4a5568;
+        }
+        .btn-logout {
+            padding: 6px 12px;
+            background-color: #e2e8f0;
+            color: #4a5568;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 0.8rem;
+        }
+        .btn-logout:hover {
+            background-color: #cbd5e0;
+        }
+
+        /* 입력 및 리스트 스타일 */
         .input-box {
             display: flex;
             gap: 10px;
             margin-bottom: 30px;
+        }
+        .hidden {
+            display: none !important;
         }
         input[type="text"] {
             flex: 1;
@@ -44,14 +93,13 @@
             border-radius: 6px;
             font-size: 0.95rem;
             background-color: #f8f9fa;
-            transition: all 0.2s ease;
         }
         input[type="text"]:focus {
             outline: none;
             border-color: #4a5568;
             background-color: #ffffff;
         }
-        button {
+        .btn-submit {
             padding: 12px 24px;
             background-color: #2d3748;
             color: #ffffff;
@@ -60,9 +108,8 @@
             font-size: 0.95rem;
             font-weight: 500;
             cursor: pointer;
-            transition: background 0.2s ease;
         }
-        button:hover {
+        .btn-submit:hover {
             background-color: #1a202c;
         }
         .guestbook-list {
@@ -80,8 +127,11 @@
             border-radius: 4px;
             font-size: 0.95rem;
             line-height: 1.5;
-            color: #4a5568;
-            animation: fadeIn 0.3s ease-in-out;
+        }
+        .author-name {
+            font-weight: bold;
+            color: #2d3748;
+            margin-bottom: 4px;
         }
         .time-stamp {
             display: block;
@@ -89,33 +139,47 @@
             color: #a0aec0;
             margin-top: 6px;
         }
-        @keyframes fadeIn {
-            from { opacity: 0; transform: translateY(10px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
     </style>
 </head>
 <body>
 
 <div class="container">
-    <h2>실시간 방명록 (Guestbook)</h2>
+    <h2>실시간 방명록 (With 구글 로그인)</h2>
     
-    <!-- 입력 영역 -->
-    <div class="input-box">
-        <input type="text" id="guestMessage" placeholder="메시지를 입력하세요..." autocomplete="off">
-        <button id="btnSubmit">등록</button>
+    <!-- 인증 영역 (로그인/로그아웃) -->
+    <div class="auth-box">
+        <div id="loginSection">
+            <button class="btn-google" id="btnLogin">
+                <img src="https://github.com/jcshim/img/raw/main/jcshim.jpg" width="18" style="border-radius:50%; display:none;"> <!-- 대체용 구글 아이콘 자리 -->
+                구글 계정으로 로그인하기
+            </button>
+        </div>
+        <div id="userSection" class="hidden">
+            <div class="user-info">
+                <span><strong id="userName">사용자</strong>님 환영합니다.</span>
+                <button class="btn-logout" id="btnLogout">로그아웃</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- 입력 영역 (로그인해야 보임) -->
+    <div class="input-box hidden" id="inputSection">
+        <input type="text" id="guestMessage" placeholder="따뜻한 한 줄을 남겨주세요..." autocomplete="off">
+        <button class="btn-submit" id="btnSubmit">등록</button>
     </div>
 
     <!-- 방명록 리스트 영역 -->
     <ul class="guestbook-list" id="guestbookList"></ul>
 </div>
 
-<!-- Firebase v10 SDK 모듈 스크립트 연동 -->
+<!-- Firebase v10 SDK 연동 -->
 <script type="module">
     import { initializeApp } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-app.js";
     import { getFirestore, collection, addDoc, query, orderBy, onSnapshot } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-firestore.js";
+    // 인증 기능(Auth) 모듈 추가 임포트
+    import { getAuth, signInWithPopup, GoogleAuthProvider, signOut, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/10.10.0/firebase-auth.js";
 
-    // 제공해주신 Firebase Config 설정
+    // Firebase Config 설정
     const firebaseConfig = {
         apiKey: "AIzaSyBK7hn5H1kr6d6nxijRNt8UIDaxDOLYMIQ",
         authDomain: "jcshim-test.firebaseapp.com",
@@ -125,59 +189,89 @@
         appId: "1:4415180017:web:87252a246a443888e6ad50"
     };
 
-    // Firebase 및 Firestore 초기화
+    // 초기화
     const app = initializeApp(firebaseConfig);
     const db = getFirestore(app);
+    const auth = getAuth(app);
+    const provider = new GoogleAuthProvider();
 
-    // DOM 요소 가져오기
+    // 변수 선언
+    let currentUser = null;
+
+    // DOM 요소
+    const loginSection = document.getElementById('loginSection');
+    const userSection = document.getElementById('userSection');
+    const inputSection = document.getElementById('inputSection');
+    const userNameDisplay = document.getElementById('userName');
     const messageInput = document.getElementById('guestMessage');
     const submitBtn = document.getElementById('btnSubmit');
     const guestbookList = document.getElementById('guestbookList');
 
-    // 1. 데이터 저장 (addDoc)
+    // [인증 상태 감지] 로그인 상태가 바뀌면 자동으로 실행되는 뼈대 함수
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            // 로그인 완료 상태
+            currentUser = user;
+            userNameDisplay.innerText = user.displayName; // 구글 프로필 이름
+            loginSection.classList.add('hidden');
+            userSection.classList.remove('hidden');
+            inputSection.classList.remove('hidden'); // 입력창 보여주기
+        } else {
+            // 로그아웃 상태
+            currentUser = null;
+            loginSection.classList.remove('hidden');
+            userSection.classList.add('hidden');
+            inputSection.classList.add('hidden'); // 입력창 숨기기
+        }
+    });
+
+    // 구글 로그인 팝업 띄우기
+    document.getElementById('btnLogin').addEventListener('click', async () => {
+        try {
+            await signInWithPopup(auth, provider);
+        } catch (error) {
+            console.error("로그인 실패:", error);
+            alert("로그인 중 오류가 발생했습니다.");
+        }
+    });
+
+    // 로그아웃 처리
+    document.getElementById('btnLogout').addEventListener('click', () => {
+        signOut(auth);
+    });
+
+    // 데이터 저장 (글쓰기)
     async function saveMessage() {
         const text = messageInput.value.trim();
-        if (!text) return; // 빈 칸이면 중단
+        if (!text || !currentUser) return; 
 
         try {
             await addDoc(collection(db, "guestbook"), {
+                author: currentUser.displayName, // 구글 실명 저장
                 message: text,
-                createdAt: new Date() // 현재 시간 저장
+                createdAt: new Date()
             });
-            messageInput.value = ""; // 입력창 초기화
+            messageInput.value = "";
         } catch (error) {
-            console.error("데이터 저장 실패: ", error);
-            alert("저장에 실패했습니다. Firestore 보안 규칙을 확인해보세요.");
+            console.error("저장 실패:", error);
         }
     }
 
-    // 버튼 클릭 및 엔터 키 이벤트 리스너
     submitBtn.addEventListener('click', saveMessage);
-    messageInput.addEventListener('keypress', (e) => {
-        if (e.key === 'Enter') saveMessage();
-    });
+    messageInput.addEventListener('keypress', (e) => { if (e.key === 'Enter') saveMessage(); });
 
-    // 2. 실시간 데이터 동기화 및 렌더링 (onSnapshot)
-    // 등록된 시간(createdAt) 기준 내림차순(최신 글이 위로) 정렬하여 쿼리 생성
+    // 실시간 데이터 출력 리스너
     const q = query(collection(db, "guestbook"), orderBy("createdAt", "desc"));
-
     onSnapshot(q, (snapshot) => {
-        guestbookList.innerHTML = ""; // 기존 목록 비우기
-        
+        guestbookList.innerHTML = "";
         snapshot.forEach((doc) => {
             const data = doc.data();
-            
-            // 날짜 보기 좋게 포맷팅
-            let timeString = "";
-            if (data.createdAt) {
-                const date = data.createdAt.toDate();
-                timeString = date.toLocaleString('ko-KR', { hour12: false });
-            }
+            let timeString = data.createdAt ? data.createdAt.toDate().toLocaleString('ko-KR', { hour12: false }) : "";
 
-            // HTML 리스트 아이템 동적 생성
             const li = document.createElement('li');
             li.className = 'guestbook-item';
             li.innerHTML = `
+                <div class="author-name">✍️ ${data.author || '익명'}</div>
                 <div>${data.message}</div>
                 <span class="time-stamp">${timeString}</span>
             `;
