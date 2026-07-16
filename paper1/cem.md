@@ -1,4 +1,8 @@
-C language as a Computational Execution Model
+C as a Language for the Computational Execution Model
+
+C as a Window into Computational Execution
+In the AI era, students should learn C not primarily to write code, but to understand how computation is executed.
+
 
 ### 1. 논문 제목
 
